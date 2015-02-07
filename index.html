@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mapillary by DenisCarriere</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Mapillary</h1>
+        <p>Mapillary: Python API</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/DenisCarriere/mapillary" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/DenisCarriere/mapillary/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/DenisCarriere/mapillary/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>
+<a id="mapillary-python-api" class="anchor" href="#mapillary-python-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mapillary: Python API</h1>
+
+<p>A big thanks to the guys at <a href="https://twitter.com/mapillary">@Mapillary</a> for publishing many great <a href="https://github.com/mapillary/mapillary_tools/tree/master/python">Python tools for Mapillary</a>.</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Latest version from <strong>Github Repo</strong></p>
+
+<div class="highlight highlight-bash"><pre>$ git clone https://github.com/DenisCarriere/mapillary.git
+$ <span class="pl-s3">cd</span> mapillary_tools
+$ python setup.py install</pre></div>
+
+<p>Stable version from <strong>PyPi</strong></p>
+
+<div class="highlight highlight-bash"><pre>$ pip install mapillary</pre></div>
+
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
+
+<h3>
+<a id="manual-uploads" class="anchor" href="#manual-uploads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manual Uploads</h3>
+
+<p>The Standard manual upload method requires your Mapillary credential</p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span> -e <span class="pl-s1"><span class="pl-pds">"</span>&lt;your@email.com&gt;<span class="pl-pds">"</span></span> -p <span class="pl-s1"><span class="pl-pds">"</span>&lt;Password&gt;<span class="pl-pds">"</span></span></pre></div>
+
+<p>Using environment variables you can send your Mapillary credentials safely.</p>
+
+<ol>
+<li>
+<p>Connect the the following URL for to retrieve the <strong>Hashes</strong>.</p>
+
+<p><a href="http://api.mapillary.com/v1/u/uploadhashes">http://api.mapillary.com/v1/u/uploadhashes</a></p>
+</li>
+<li><p>Export env variables <code>MAPILLARY_PERMISSION_HASH</code> &amp; <code>MAPILLARY_SIGNATURE_HASH</code>, you can edit <code>~/.bashrc</code> to store them to your terminal.</p></li>
+<li><p>Use the Mapillary <code>upload</code> command with your <code>Username</code>.</p></li>
+</ol>
+
+<div class="highlight highlight-bash"><pre>$ <span class="pl-s">export</span> <span class="pl-vo">$MAPILLARY_PERMISSION_HASH</span>=<span class="pl-k">&lt;</span>permission_hash<span class="pl-k">&gt;</span>
+$ <span class="pl-s">export</span> <span class="pl-vo">$MAPILLARY_SIGNATURE_HASH</span>=<span class="pl-k">&lt;</span>signature_hash<span class="pl-k">&gt;</span>
+$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span></pre></div>
+
+<h3>
+<a id="successful-upload" class="anchor" href="#successful-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful Upload</h3>
+
+<p>A typical successful upload will look like the following:</p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary upload -i GoPro -u deniscarriere
+
+[SUCCESS] Mapillary connection established.
+Uploading sequence 3e41e334-3a50-4e41-8206-dae2a4d24e5a.
+Uploading: G0047731.JPG
+Uploading: G0047747.JPG
+ Uploading: G0047736.JPG
+Uploading: G0047742.JPG
+Success: G0047736.JPG
+...
+Success: G0047768.JPG
+Success: G0047751.JPG
+===
+Finalizing upload will submit all successful uploads and ignore all failed.
+If all files were marked as successful, everything is fine, just press <span class="pl-s1"><span class="pl-pds">'</span>y<span class="pl-pds">'</span></span>.
+Finalize upload<span class="pl-k">?</span> [y/n]: y
+Upload a DONE file to tell the backend that the sequence is all uploaded and ready to submit.
+Uploading: DONE
+Success: DONE
+Done uploading.</pre></div>
+
+<h3>
+<a id="command-line-interface" class="anchor" href="#command-line-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Line Interface</h3>
+
+<div class="highlight highlight-bash"><pre>$ mapillary -h</pre></div>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>command</code></td>
+<td align="left">Mapillary API</td>
+</tr>
+<tr>
+<td align="left">
+<code>-i</code>, <code>--input</code>
+</td>
+<td align="left">Input: File Path</td>
+</tr>
+<tr>
+<td align="left">
+<code>-o</code>, <code>--out</code>
+</td>
+<td align="left">Output: File Path</td>
+</tr>
+<tr>
+<td align="left">
+<code>-e</code>, <code>--email</code>
+</td>
+<td align="left">Mapillary: email</td>
+</tr>
+<tr>
+<td align="left">
+<code>-u</code>, <code>--username</code>
+</td>
+<td align="left">Mapillary: username</td>
+</tr>
+<tr>
+<td align="left">
+<code>-p</code>, <code>--password</code>
+</td>
+<td align="left">Mapillary: password</td>
+</tr>
+<tr>
+<td align="left">
+<code>-h</code>, <code>--help</code>
+</td>
+<td align="left">Help File</td>
+</tr>
+</tbody>
+</table>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/DenisCarriere">DenisCarriere</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
