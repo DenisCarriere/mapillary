@@ -1,5 +1,7 @@
 # Mapillary: Python API
 
+A big thanks to the guys at [@Mapillary] for publishing many great [Python tools for Mapillary].
+
 ## Install
 
 Latest version from **Github Repo**
@@ -18,32 +20,29 @@ $ pip install mapillary
 
 ## How to use
 
+
 ### Manual Uploads
 
 The Standard manual upload method requires your Mapillary credential
 
 ```bash
-$ mapillary upload <File Path> -u <Username> -e <your@email.com> -p <Password>
+$ mapillary upload "<File Path>" -u "<Username>" -e "<your@email.com>" -p "<Password>"
 ```
 
 Using environment variables you can send your Mapillary credentials safely.
 
 1. Connect the the following URL for to retrieve the **Hashes**.
 
-- http://api.mapillary.com/v1/u/uploadhashes
+ http://api.mapillary.com/v1/u/uploadhashes
 
-2. Export env variables or edit `~/.bashrc`
-
-```bash
-    $ export $MAPILLARY_PERMISSION_HASH=<permission_hash>
-    $ export $MAPILLARY_SIGNATURE_HASH=<signature_hash>
-    $ upload_with_authentication <File Path>
-```
+2. Export env variables `MAPILLARY_PERMISSION_HASH` & `MAPILLARY_SIGNATURE_HASH`, you can edit `~/.bashrc` to store them to your terminal.
 
 3. Use the Mapillary `upload` command with your `Username`.
 
 ```bash
-$ mapillary upload <File Path> -u <Username>
+$ export $MAPILLARY_PERMISSION_HASH=<permission_hash>
+$ export $MAPILLARY_SIGNATURE_HASH=<signature_hash>
+$ mapillary upload "<File Path>" -u "<Username>"
 ```
 
 ### Successful Upload
@@ -72,3 +71,22 @@ Uploading: DONE
 Success: DONE
 Done uploading.
 ```
+
+### Command Line Interface
+
+```bash
+$ mapillary -h
+```
+
+|    Parameter       |     Description     |
+|:-------------------|:--------------------|
+| `command`          | Mapillary API       |
+| `-i`, `--input`    | Input: File Path    |
+| `-o`, `--out`      | Output: File Path   |
+| `-e`, `--email`    | Mapillary: email    |
+| `-u`, `--username` | Mapillary: username |
+| `-p`, `--password` | Mapillary: password |
+| `-h`, `--help`     | Help File           |
+
+[Python tools for Mapillary]: https://github.com/mapillary/mapillary_tools/tree/master/python
+[@Mapillary]: https://twitter.com/mapillary
