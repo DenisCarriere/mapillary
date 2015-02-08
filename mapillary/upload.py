@@ -5,7 +5,6 @@ import os
 import requests
 import exifread
 import urllib2
-import urllib
 import mimetypes
 import socket
 import threading
@@ -115,13 +114,13 @@ def retrieve_hashes(email, password):
         content = r.json()
         status = content.get('status')
     except:
-        print '[ERROR] Please confirm your Mapillary email/password'
-        print '--email:', email
-        print '--password:', password
-        exit()
+        print('[ERROR] Please confirm your Mapillary email/password')
+        print('--email:', email)
+        print('--password:', password)
+        sys.exit()
 
     if status == 200:
-        print '[SUCCESS] Mapillary connection established.'
+        print('[SUCCESS] Mapillary connection established.')
         return content
 
 
@@ -261,11 +260,11 @@ def upload_done_file(params):
     os.remove("DONE")
 
 
-def manual_upload(path, username, signature, permission):
+def manual_upload(path, **kwargs):
     MAPILLARY_UPLOAD_URL = "https://s3-eu-west-1.amazonaws.com/mapillary.uploads.manual.images"
-    MAPILLARY_SIGNATURE_HASH = signature
-    MAPILLARY_PERMISSION_HASH = permission
-    MAPILLARY_USERNAME = username
+    MAPILLARY_USERNAME = kwargs.get('username')
+    MAPILLARY_SIGNATURE_HASH = kwargs.get('signature', os.environ['MAPILLARY_SIGNATURE_HASH'])
+    MAPILLARY_PERMISSION_HASH = kwargs.get('permission', os.environ['MAPILLARY_PERMISSION_HASH'])
 
     # if no success/failed folders, create them
     create_dirs()

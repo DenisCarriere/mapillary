@@ -1,22 +1,32 @@
 #!/usr/bin/python
 # coding: utf8
 
+import os
+import sys
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist bdist_wheel upload')
+    sys.exit()
+
 version = '0.0.1'
 requires = ['requests>=2.5.1', 'exifread>=2.0.0']
 
+with open('README.md') as f:
+    readme = f.read()
 with open('LICENSE') as f:
     license = f.read()
+
 
 setup(
     name='mapillary',
     version=version,
     description="Useful tools and scripts related to Mapillary",
+    long_description=readme,
     url='https://github.com/mapillary/mapillary_tools',
     download_url='https://github.com/mapillary/mapillary_tools/tarball/master',
     license=license,

@@ -18,6 +18,13 @@ Stable version from **PyPi**
 $ pip install mapillary
 ```
 
+
+## Compatibility
+
+Mapillary API is tested on the following Python versions:
+
+- 2.7
+
 ## How to use
 
 
@@ -26,7 +33,8 @@ $ pip install mapillary
 The Standard manual upload method requires your Mapillary credential
 
 ```bash
-$ mapillary upload "<File Path>" -u "<Username>" -e "<your@email.com>" -p "<Password>"
+$ mapillary upload "<File Path>" -u "<Username>" \
+-e "<your@email.com>" -p "<Password>"
 ```
 
 Using environment variables you can send your Mapillary credentials safely.
@@ -66,7 +74,8 @@ Success: G0047751.JPG
 Finalizing upload will submit all successful uploads and ignore all failed.
 If all files were marked as successful, everything is fine, just press 'y'.
 Finalize upload? [y/n]: y
-Upload a DONE file to tell the backend that the sequence is all uploaded and ready to submit.
+Upload a DONE file to tell the backend that the sequence 
+is all uploaded and ready to submit.
 Uploading: DONE
 Success: DONE
 Done uploading.

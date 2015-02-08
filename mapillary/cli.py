@@ -3,8 +3,9 @@
 
 import argparse
 import os
-from upload import retrieve_hashes
-from upload import manual_upload
+import sys
+from .upload import retrieve_hashes
+from .upload import manual_upload
 
 
 def cli():
@@ -26,14 +27,14 @@ def cli():
 
     if 'upload' in args.command:
         if not args.input:
-            print '[ERROR] Please include a <File Path>'
-            print '$ mapillary upload <File Path> -u <Username>'
-            exit()
+            print('[ERROR] Please include a <File Path>')
+            print('$ mapillary upload <File Path> -u <Username>')
+            sys.exit()
 
         if not args.username:
-            print '[ERROR] Please include a <Username>'
-            print '$ mapillary upload <File Path> -u <Username>'
-            exit()
+            print('[ERROR] Please include a <Username>')
+            print('$ mapillary upload <File Path> -u <Username>')
+            sys.exit()
 
         # Verify Credentials
         if bool(args.email and args.password):
@@ -45,8 +46,18 @@ def cli():
             permission = content['MAPILLARY_PERMISSION_HASH']
             signature = content['MAPILLARY_SIGNATURE_HASH']
         else:
-            print '[ERROR] Please include both <Password> & <Email>'
-            print '$ mapillary upload <File Path> -u <Username> -e <your@email.com> -p <Password>'
-            exit()
+            print('[ERROR] Please include both <Password> & <Email>')
+            print('$ mapillary upload <File Path> -u <Username> -e <your@email.com> -p <Password>')
+            sys.exit()
 
-        manual_upload(args.input, args.username, signature, permission)
+        manual_upload(args.input, username=args.username, signature=signature, permission=permission)
+    else:
+        print('')
+        print('        Mapillary API            ')
+        print('=================================')
+        print('Please include a command (upload)')
+        print('Examples:')
+        print('$ mapillary upload <File Path> -u <Username> -e <your@email.com> -p <Password>')
+        print('--------------END----------------')
+        print('')
+        sys.exit()

@@ -25,5 +25,11 @@ $ export $MAPILLARY_PERMISSION_HASH=<permission_hash>
 $ export $MAPILLARY_SIGNATURE_HASH=<signature_hash>
 """
 
-# CLI
-import cli
+__title__ = 'mapillary'
+__author__ = 'Denis Carriere'
+__author_email__ = 'carriere.denis@gmail.com'
+__version__ = '0.0.1'
+__license__ = 'MIT'
+
+
+from .api import upload
