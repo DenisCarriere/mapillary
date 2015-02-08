@@ -8,3 +8,5 @@ import unittest
 
 def test_entry_points():
     mapillary.upload
+    mapillary.hashes
+    mapillary.geotag

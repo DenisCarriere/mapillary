@@ -28,8 +28,8 @@ $ export $MAPILLARY_SIGNATURE_HASH=<signature_hash>
 __title__ = 'mapillary'
 __author__ = 'Denis Carriere'
 __author_email__ = 'carriere.denis@gmail.com'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __license__ = 'MIT'
 
 
-from .api import upload
+from .api import upload, geotag, hashes

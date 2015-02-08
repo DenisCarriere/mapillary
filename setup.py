@@ -13,8 +13,13 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel upload')
     sys.exit()
 
-version = '0.0.1'
-requires = ['requests>=2.5.1', 'exifread>=2.0.0']
+version = '0.0.2'
+requires = [
+    'pytest>=2.6.4',
+    'requests>=2.5.1',
+    'exifread>=2.0.0',
+    'gpxpy>=0.9.8',
+    'python-dateutil>=2.4.0']
 
 with open('README.md') as f:
     readme = f.read()
