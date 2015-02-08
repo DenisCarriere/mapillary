@@ -42,6 +42,8 @@
         <h1>
 <a id="mapillary-python-api" class="anchor" href="#mapillary-python-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mapillary: Python API</h1>
 
+<hr>
+
 <p>A big thanks to the guys at <a href="https://twitter.com/mapillary">@Mapillary</a> for publishing many great <a href="https://github.com/mapillary/mapillary_tools/tree/master/python">Python tools for Mapillary</a>.</p>
 
 <h2>
@@ -58,14 +60,21 @@ $ python setup.py install</pre></div>
 <div class="highlight highlight-bash"><pre>$ pip install mapillary</pre></div>
 
 <h2>
-<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
+<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compatibility</h2>
 
-<h3>
-<a id="manual-uploads" class="anchor" href="#manual-uploads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manual Uploads</h3>
+<p>Mapillary API is tested on the following Python versions:</p>
+
+<ul>
+<li>2.7</li>
+</ul>
+
+<h2>
+<a id="manual-uploads" class="anchor" href="#manual-uploads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manual Uploads</h2>
 
 <p>The Standard manual upload method requires your Mapillary credential</p>
 
-<div class="highlight highlight-bash"><pre>$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span> -e <span class="pl-s1"><span class="pl-pds">"</span>&lt;your@email.com&gt;<span class="pl-pds">"</span></span> -p <span class="pl-s1"><span class="pl-pds">"</span>&lt;Password&gt;<span class="pl-pds">"</span></span></pre></div>
+<div class="highlight highlight-bash"><pre>$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span> \
+-e <span class="pl-s1"><span class="pl-pds">"</span>&lt;your@email.com&gt;<span class="pl-pds">"</span></span> -p <span class="pl-s1"><span class="pl-pds">"</span>&lt;Password&gt;<span class="pl-pds">"</span></span></pre></div>
 
 <p>Using environment variables you can send your Mapillary credentials safely.</p>
 
@@ -83,8 +92,8 @@ $ python setup.py install</pre></div>
 $ <span class="pl-s">export</span> <span class="pl-vo">$MAPILLARY_SIGNATURE_HASH</span>=<span class="pl-k">&lt;</span>signature_hash<span class="pl-k">&gt;</span>
 $ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span></pre></div>
 
-<h3>
-<a id="successful-upload" class="anchor" href="#successful-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful Upload</h3>
+<h2>
+<a id="successful-upload" class="anchor" href="#successful-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful Upload</h2>
 
 <p>A typical successful upload will look like the following:</p>
 
@@ -104,13 +113,14 @@ Success: G0047751.JPG
 Finalizing upload will submit all successful uploads and ignore all failed.
 If all files were marked as successful, everything is fine, just press <span class="pl-s1"><span class="pl-pds">'</span>y<span class="pl-pds">'</span></span>.
 Finalize upload<span class="pl-k">?</span> [y/n]: y
-Upload a DONE file to tell the backend that the sequence is all uploaded and ready to submit.
+Upload a DONE file to tell the backend that the sequence 
+is all uploaded and ready to submit.
 Uploading: DONE
 Success: DONE
 Done uploading.</pre></div>
 
-<h3>
-<a id="command-line-interface" class="anchor" href="#command-line-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Line Interface</h3>
+<h2>
+<a id="command-line-interface" class="anchor" href="#command-line-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command Line Interface</h2>
 
 <div class="highlight highlight-bash"><pre>$ mapillary -h</pre></div>
 
