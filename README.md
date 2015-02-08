@@ -26,6 +26,27 @@ Mapillary API is tested on the following Python versions:
 
 - 2.7
 
+## Command Line Interface
+
+```bash
+$ mapillary -h
+```
+
+|    Parameter       |     Description      |
+|:-------------------|:---------------------|
+| `command`          | Mapillary API        |
+| `input`            | Input: File Path     |
+| `-o`, `--out`      | Output: File Path    |
+| `-e`, `--email`    | Mapillary: Email     |
+| `-u`, `--username` | Mapillary: Username  |
+| `-p`, `--password` | Mapillary: Password  |
+| `-g`, `--gpx`      | GPX Track: File Path |
+| `-b`, `--bearing`  | GPX: Bearing offset  |
+| `-t`, `--time`     | GPX: Time offset     |
+| `-h`, `--help`     | Help File            |
+
+***
+
 ## Geotag Photos
 
 This process will add GPS information to all photos inside a folder correlated from a GPX Track.
@@ -64,7 +85,7 @@ Saving file: 100GOPRO/G0018600.JPG
 Saving file: 100GOPRO/G0028752.JPG
 ...
 ```
-
+***
 
 ## Manual Uploads
 
@@ -120,25 +141,6 @@ Uploading: DONE
 Success: DONE
 Done uploading.
 ```
-
-## Command Line Interface
-
-```bash
-$ mapillary -h
-```
-
-|    Parameter       |     Description      |
-|:-------------------|:---------------------|
-| `command`          | Mapillary API        |
-| `input`            | Input: File Path     |
-| `-o`, `--out`      | Output: File Path    |
-| `-e`, `--email`    | Mapillary: Email     |
-| `-u`, `--username` | Mapillary: Username  |
-| `-p`, `--password` | Mapillary: Password  |
-| `-g`, `--gpx`      | GPX Track: File Path |
-| `-b`, `--bearing`  | GPX: Bearing offset  |
-| `-t`, `--time`     | GPX: Time offset     |
-| `-h`, `--help`     | Help File            |
 
 [Python tools for Mapillary]: https://github.com/mapillary/mapillary_tools/tree/master/python
 [@Mapillary]: https://twitter.com/mapillary
