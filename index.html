@@ -69,12 +69,50 @@ $ python setup.py install</pre></div>
 </ul>
 
 <h2>
+<a id="geotag-photos" class="anchor" href="#geotag-photos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Geotag Photos</h2>
+
+<p>This process will add GPS information to all photos inside a folder correlated from a GPX Track.</p>
+
+<p><strong>WARNING</strong> This will overwrite any existing GPS EXIF to the existing files </p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary geotag <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> --gpx <span class="pl-s1"><span class="pl-pds">"</span>&lt;GPX File Path&gt;<span class="pl-pds">"</span></span></pre></div>
+
+<h3>
+<a id="bearing-offset" class="anchor" href="#bearing-offset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bearing Offset</h3>
+
+<p>If your camera was pointed to the right (90 Degrees), you can include a <code>bearing</code> offset to correct the <strong>GPSImageDirection</strong></p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary geotag <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> --gpx <span class="pl-s1"><span class="pl-pds">"</span>&lt;GPX File Path&gt;<span class="pl-pds">"</span></span> --bearing 90</pre></div>
+
+<h3>
+<a id="time-offset" class="anchor" href="#time-offset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Offset</h3>
+
+<p>If the <strong>Timestamp</strong> of your GPS and camera are not in sync, you can include a <code>time</code> offset (Seconds) to adjust the <strong>GPSDateTime</strong>.</p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary geotag <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> --gpx <span class="pl-s1"><span class="pl-pds">"</span>&lt;GPX File Path&gt;<span class="pl-pds">"</span></span> --<span class="pl-k">time</span> 2</pre></div>
+
+<h3>
+<a id="successful-geotag" class="anchor" href="#successful-geotag" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful GeoTag</h3>
+
+<p>A typical output for a successful Geotag process</p>
+
+<div class="highlight highlight-bash"><pre>$ mapillary geotag <span class="pl-s1"><span class="pl-pds">"</span>100GOPRO<span class="pl-pds">"</span></span> -g <span class="pl-s1"><span class="pl-pds">"</span>GoPro 4.gpx<span class="pl-pds">"</span></span>
+Saving file: 100GOPRO/G0018624.JPG
+Saving file: 100GOPRO/G0028783.JPG
+Saving file: 100GOPRO/G0018600.JPG
+Saving file: 100GOPRO/G0028752.JPG
+...</pre></div>
+
+<h2>
 <a id="manual-uploads" class="anchor" href="#manual-uploads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manual Uploads</h2>
 
 <p>The Standard manual upload method requires your Mapillary credential</p>
 
 <div class="highlight highlight-bash"><pre>$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span> \
 -e <span class="pl-s1"><span class="pl-pds">"</span>&lt;your@email.com&gt;<span class="pl-pds">"</span></span> -p <span class="pl-s1"><span class="pl-pds">"</span>&lt;Password&gt;<span class="pl-pds">"</span></span></pre></div>
+
+<h3>
+<a id="using-environment-variables" class="anchor" href="#using-environment-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Environment Variables</h3>
 
 <p>Using environment variables you can send your Mapillary credentials safely.</p>
 
@@ -92,12 +130,12 @@ $ python setup.py install</pre></div>
 $ <span class="pl-s">export</span> <span class="pl-vo">$MAPILLARY_SIGNATURE_HASH</span>=<span class="pl-k">&lt;</span>signature_hash<span class="pl-k">&gt;</span>
 $ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>&lt;File Path&gt;<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>&lt;Username&gt;<span class="pl-pds">"</span></span></pre></div>
 
-<h2>
-<a id="successful-upload" class="anchor" href="#successful-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful Upload</h2>
+<h3>
+<a id="successful-upload" class="anchor" href="#successful-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Successful Upload</h3>
 
 <p>A typical successful upload will look like the following:</p>
 
-<div class="highlight highlight-bash"><pre>$ mapillary upload -i GoPro -u deniscarriere
+<div class="highlight highlight-bash"><pre>$ mapillary upload <span class="pl-s1"><span class="pl-pds">"</span>GoPro<span class="pl-pds">"</span></span> -u <span class="pl-s1"><span class="pl-pds">"</span>deniscarriere<span class="pl-pds">"</span></span>
 
 [SUCCESS] Mapillary connection established.
 Uploading sequence 3e41e334-3a50-4e41-8206-dae2a4d24e5a.
@@ -137,9 +175,7 @@ Done uploading.</pre></div>
 <td align="left">Mapillary API</td>
 </tr>
 <tr>
-<td align="left">
-<code>-i</code>, <code>--input</code>
-</td>
+<td align="left"><code>input</code></td>
 <td align="left">Input: File Path</td>
 </tr>
 <tr>
@@ -152,19 +188,37 @@ Done uploading.</pre></div>
 <td align="left">
 <code>-e</code>, <code>--email</code>
 </td>
-<td align="left">Mapillary: email</td>
+<td align="left">Mapillary: Email</td>
 </tr>
 <tr>
 <td align="left">
 <code>-u</code>, <code>--username</code>
 </td>
-<td align="left">Mapillary: username</td>
+<td align="left">Mapillary: Username</td>
 </tr>
 <tr>
 <td align="left">
 <code>-p</code>, <code>--password</code>
 </td>
-<td align="left">Mapillary: password</td>
+<td align="left">Mapillary: Password</td>
+</tr>
+<tr>
+<td align="left">
+<code>-g</code>, <code>--gpx</code>
+</td>
+<td align="left">GPX Track: File Path</td>
+</tr>
+<tr>
+<td align="left">
+<code>-b</code>, <code>--bearing</code>
+</td>
+<td align="left">GPX: Bearing offset</td>
+</tr>
+<tr>
+<td align="left">
+<code>-t</code>, <code>--time</code>
+</td>
+<td align="left">GPX: Time offset</td>
 </tr>
 <tr>
 <td align="left">
