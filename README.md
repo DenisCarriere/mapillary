@@ -1,5 +1,7 @@
 # Mapillary: Python API
 
+***
+
 A big thanks to the guys at [@Mapillary] for publishing many great [Python tools for Mapillary].
 
 ## Install
@@ -25,10 +27,7 @@ Mapillary API is tested on the following Python versions:
 
 - 2.7
 
-## How to use
-
-
-### Manual Uploads
+## Manual Uploads
 
 The Standard manual upload method requires your Mapillary credential
 
@@ -53,7 +52,7 @@ $ export $MAPILLARY_SIGNATURE_HASH=<signature_hash>
 $ mapillary upload "<File Path>" -u "<Username>"
 ```
 
-### Successful Upload
+## Successful Upload
 
 A typical successful upload will look like the following:
 
@@ -81,7 +80,7 @@ Success: DONE
 Done uploading.
 ```
 
-### Command Line Interface
+## Command Line Interface
 
 ```bash
 $ mapillary -h
