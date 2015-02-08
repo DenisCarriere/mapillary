@@ -38,23 +38,10 @@ USE UPLOAD.PY INSTEAD.
 (assumes Python 2.x, for Python 3.x you need to change some module names)
 '''
 
-MAPILLARY_UPLOAD_URL = "https://d22zcsn13kp53w.cloudfront.net/"
-PERMISSION_HASH = "eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQwMDowMDowMFoiLCJj" +\
-    "b25kaXRpb25zIjpbeyJidWNrZXQiOiJtYXBpbGxhcnkudXBsb2Fkcy5pbWFnZXMifS" +\
-    "xbInN0YXJ0cy13aXRoIiwiJGtleSIsIiJdLHsiYWNsIjoicHJpdmF0ZSJ9LFsic3Rh" +\
-    "cnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0sWyJjb250ZW50LWxlbmd0aC1yYW" +\
-    "5nZSIsMCwxMDQ4NTc2MF1dfQ=="
-SIGNATURE_HASH = "foNqRicU/vySm8/qU82kGESiQhY="
 BOUNDARY_CHARS = string.digits + string.ascii_letters
 MAX_ATTEMPTS = 4
 NUMBER_THREADS = 4
 MOVE_FILES = False
-UPLOAD_PARAMS = {
-    "url": MAPILLARY_UPLOAD_URL,
-    "permission": PERMISSION_HASH,
-    "signature": SIGNATURE_HASH,
-    "move_files": True
-}
 
 
 def create_dirs():
@@ -103,7 +90,7 @@ def verify_exif(filename):
     return True
 
 
-def retrieve_hashes(email, password):
+def get_hashes(email, password):
     # Connect to Mapillary for Permission & Signature Hash
     payload = {'email': email, 'password': password}
     session = requests.Session()
@@ -151,7 +138,8 @@ def encode_multipart(fields, files, boundary=None):
     'application/octet-stream').
 
     From MIT licensed recipe at
-    http://code.activestate.com/recipes/578668-encode-multipart-form-data-for-uploading-files-via/
+    http://code.activestate.com/recipes/
+    578668-encode-multipart-form-data-for-uploading-files-via/
     """
     def escape_quote(s):
         return s.replace('"', '\\"')
@@ -196,11 +184,17 @@ def encode_multipart(fields, files, boundary=None):
     return (body, headers)
 
 
-def upload_file(filepath, url, permission, signature, key=None, move_files=True):
+def upload_file(filepath,
+                url,
+                permission,
+                signature,
+                key=None,
+                move_files=True):
         '''
         Upload file at filepath.
 
-        Move to subfolders 'success'/'failed' on completion if move_files is True.
+        Move to subfolders 'success'/'failed' on
+        completion if move_files is True.
         '''
 
         filename = os.path.basename(filepath)
@@ -224,7 +218,9 @@ def upload_file(filepath, url, permission, signature, key=None, move_files=True)
         with open(filepath, "rb") as f:
             encoded_string = f.read()
 
-        data, headers = encode_multipart(parameters, {'file': {'filename': filename, 'content': encoded_string}})
+        files = {'file': {'filename': filename, 'content': encoded_string}}
+
+        data, headers = encode_multipart(parameters, files)
 
         for attempt in range(MAX_ATTEMPTS):
             try:
@@ -251,7 +247,8 @@ def upload_file(filepath, url, permission, signature, key=None, move_files=True)
 
 
 def upload_done_file(params):
-    print("Upload a DONE file to tell the backend that the sequence is all uploaded and ready to submit.")
+    print("Upload a DONE file to tell the backend that"
+          "the sequence is all uploaded and ready to submit.")
     if not os.path.exists('DONE'):
         open("DONE", 'a').close()
     #upload
@@ -260,23 +257,50 @@ def upload_done_file(params):
     os.remove("DONE")
 
 
-def manual_upload(path, **kwargs):
-    MAPILLARY_UPLOAD_URL = "https://s3-eu-west-1.amazonaws.com/mapillary.uploads.manual.images"
-    MAPILLARY_USERNAME = kwargs.get('username')
-    MAPILLARY_SIGNATURE_HASH = kwargs.get('signature', os.environ['MAPILLARY_SIGNATURE_HASH'])
-    MAPILLARY_PERMISSION_HASH = kwargs.get('permission', os.environ['MAPILLARY_PERMISSION_HASH'])
-
-    # if no success/failed folders, create them
-    create_dirs()
-
+def create_file_list(path):
     if path.lower().endswith(".jpg"):
         # single file
-        file_list = [path]
+        return [path]
     else:
         # folder(s)
         file_list = []
         for root, sub_folders, files in os.walk(path):
             file_list += [os.path.join(root, filename) for filename in files if filename.lower().endswith(".jpg")]
+            return file_list
+
+
+def manual_upload(path, **kwargs):
+    MAPILLARY_UPLOAD_URL = "https://s3-eu-west-1.amazonaws.com" +\
+                           "/mapillary.uploads.manual.images"
+    MAPILLARY_USERNAME = kwargs.get('username')
+
+    # Retrieve Key Args
+    email = kwargs.get('email')
+    password = kwargs.get('password')
+    permission = kwargs.get('permission')
+    signature = kwargs.get('signature')
+
+    if bool(permission and signature):
+        pass
+    elif bool(email and password):
+        content = get_hashes(email, password)
+        permission = content['permission_hash']
+        signature = content['signature_hash']
+    else:
+        try:
+            permission = os.environ['MAPILLARY_PERMISSION_HASH']
+            signature = os.environ['MAPILLARY_SIGNATURE_HASH']
+        except:
+            print('[ERROR] Please include both <Email> & <Password>\n'
+                  '$ mapillary upload <File Path>\n'
+                  '> -u <Username> -e <your@email.com> -p <Password>')
+            sys.exit()
+
+    # if no success/failed folders, create them
+    create_dirs()
+
+    # Creates a list of all the files containing JPEGS
+    file_list = create_file_list(path)
 
     # generate a sequence UUID
     sequence_id = uuid.uuid4()
@@ -289,8 +313,8 @@ def manual_upload(path, **kwargs):
     params = {
         "url": MAPILLARY_UPLOAD_URL,
         "key": s3_bucket,
-        "permission": MAPILLARY_PERMISSION_HASH,
-        "signature": MAPILLARY_SIGNATURE_HASH,
+        "permission": permission,
+        "signature": signature,
         "move_files": MOVE_FILES
     }
 
@@ -322,22 +346,35 @@ def manual_upload(path, **kwargs):
         sys.exit()
 
     # ask user if finalize upload to check that everything went fine
-    print("===\nFinalizing upload will submit all successful uploads and ignore all failed.\nIf all files were marked as successful, everything is fine, just press 'y'.")
+    print('===\n'
+          'Finalizing upload will submit all successful'
+          'uploads and ignore all failed.\n'
+          'If all files were marked as successful,'
+          'everything is fine, just press [y].')
 
     # ask 3 times if input is unclear
     for i in range(3):
-        proceed = raw_input("Finalize upload? [y/n]: ")
+
+        # Capatible Input method for Python 2.x & 3.x
+        try:
+            input = raw_input
+        except NameError:
+            pass
+
+        proceed = input("Finalize upload? [y/n]: ")
         if proceed in ["y", "Y", "yes", "Yes"]:
             # upload an empty DONE file
             upload_done_file(params)
             print("Done uploading.")
             break
         elif proceed in ["n", "N", "no", "No"]:
-            print("Aborted. No files were submitted. Try again if you had failures.")
+            print("Aborted. No files were submitted.\n"
+                  "Try again if you had failures.")
             break
         else:
             if i == 2:
-                print("Aborted. No files were submitted. Try again if you had failures.")
+                print("Aborted. No files were submitted.\n"
+                      "Try again if you had failures.")
             else:
                 print('Please answer y or n. Try again.')
 
