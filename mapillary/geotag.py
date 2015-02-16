@@ -150,7 +150,7 @@ def add_exif_using_timestamp(filename, points, offset_bearing=0, offset_time=0):
     img = pexif.JpegFile.fromFile(filename)
 
     # Offset Bearing
-    bearing += offset_bearing
+    bearing = (bearing + offset_bearing) % 360
 
     # Define Lat & Lng
     img.set_geo(lat, lng)
