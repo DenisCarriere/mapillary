@@ -2,12 +2,12 @@
 # coding: utf8
 
 from upload import create_file_list
-import datetime
-import gpxpy
 import exifread
-from dateutil import parser
 import math
 import pexif
+import re
+import datetime
+from bs4 import BeautifulSoup
 
 
 def utc_to_localtime(utc_time):
@@ -24,24 +24,39 @@ def get_lat_lng_time(path):
     GPX stores time in UTC, assume your camera used the local
     timezone and convert accordingly.
     '''
-    with open(path, 'r') as f:
-        gpx = gpxpy.parse(f)
-
     points = []
-    for track in gpx.tracks:
-        for segment in track.segments:
-            for point in segment.points:
-                points.append(
-                    (utc_to_localtime(point.time),
-                     point.latitude,
-                     point.longitude,
-                     point.elevation))
+    soup = BeautifulSoup(open(path))
+    for item in soup.find_all('trkpt'):
+            time = convert_time(item.time.text)
+            if time:
+                points.append((utc_to_localtime(time),
+                               float(item['lat']),
+                               float(item['lon']),
+                               float(item.ele.text)))
+            else:
+                print("SOUP ERROR: %s" % item.time.text)
 
     # sort by time just in case
     points.sort()
 
     return points
 
+
+def convert_time(t):
+    """Converts String into Datetime object"""
+
+    expression = r'\d+'
+    pattern = re.compile(expression)
+    match = pattern.findall(t)
+    if match:
+        year, month, day, hour, minute, second = match[0:6]
+        t = datetime.datetime(int(year),
+                              int(month),
+                              int(day),
+                              int(hour),
+                              int(minute),
+                              int(round(float(second), 0)))
+        return t
 
 def get_datetime_tag(tags):
     for tag in [
@@ -51,11 +66,7 @@ def get_datetime_tag(tags):
     ]:
         time = str(tags.get(tag))
         if time:
-            # Odd Parser error Fix
-            # 2015:02:07 14:38:37 > 2015-02-07 14:38:37
-            if ':' in time:
-                time = time.replace(':', '-', 2)
-            return parser.parse(str(time))
+            return convert_time(time)
 
 
 def compute_bearing(start_lat, start_lng, end_lat, end_lng):
@@ -113,8 +124,8 @@ def interpolate_lat_lng(points, timestamp):
             break
 
     # time diff
-    dt_before = (t-before[0]).total_seconds()
-    dt_after = (after[0]-t).total_seconds()
+    dt_before = (t - before[0]).total_seconds()
+    dt_after = (after[0] - t).total_seconds()
 
     # simple linear interpolation
     lat = (before[1] * dt_after + after[1]*dt_before) / (dt_before + dt_after)
@@ -146,21 +157,24 @@ def add_exif_using_timestamp(filename, points, offset_bearing=0, offset_time=0):
     # Get Coordinates from timestamp & GPX
     lat, lng, bearing, altitude = interpolate_lat_lng(points, timestamp)
 
-    # Add Geo EXIF to file
-    img = pexif.JpegFile.fromFile(filename)
+    if bool(lat and lng):
+        # Add Geo EXIF to file
+        img = pexif.JpegFile.fromFile(filename)
 
-    # Offset Bearing
-    bearing = (bearing + offset_bearing) % 360
+        # Offset Bearing
+        bearing = (bearing + offset_bearing) % 360
 
-    # Define Lat & Lng
-    img.set_geo(lat, lng)
-    img.set_altitude(altitude)
-    img.set_direction(bearing)
-    img.set_bearing(bearing)
+        # Define Lat & Lng
+        img.set_geo(lat, lng)
+        img.set_altitude(altitude)
+        img.set_direction(bearing)
+        img.set_bearing(bearing)
 
-    # Overwrite Save File
-    img.writeFile(filename)
-    print('Saving file: %s' % filename)
+        # Overwrite Save File
+        img.writeFile(filename)
+        print('Saving file: %s' % filename)
+    else:
+        print('ERROR: %s' % filename)
 
 
 class Geotag(object):
@@ -178,6 +192,7 @@ class Geotag(object):
 
 
 if __name__ == '__main__':
-    path = '/home/denis/Pictures/100GOPRO'
-    path_gpx = '/home/denis/Pictures/GoPro 4.gpx'
+    path = '/home/denis/GIS/Mapillary/Orleans_2/'
+    path_gpx = '/home/denis/GIS/Mapillary/Orleans_2.gpx'
+    gpx = get_lat_lng_time(path_gpx)
     Geotag(path, path_gpx)

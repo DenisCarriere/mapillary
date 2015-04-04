@@ -22,8 +22,10 @@ def cli():
     parser.add_argument('-u', '--username', help="Login: Mapillary username")
     parser.add_argument('-p', '--password', help="Login: Mapillary password")
     parser.add_argument('-g', '--gpx', type=str, help='GPX Track: File Path')
-    parser.add_argument('-b', '--bearing', type=str, help='GPX Offset: Image Bearing/Direction')
-    parser.add_argument('-t', '--time', type=str, help='GPX Offset: Time in Seconds')
+    parser.add_argument('-b', '--bearing', type=str,
+                        help='GPX Offset: Image Bearing/Direction')
+    parser.add_argument('-t', '--time', type=str,
+                        help='GPX Offset: Time in Seconds')
     args = parser.parse_args()
 
     if 'upload' in args.command:
