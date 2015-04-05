@@ -7,7 +7,10 @@ import math
 import pexif
 import re
 import datetime
+import time
 from bs4 import BeautifulSoup
+from geojson import FeatureCollection, Feature, LineString, Point
+import json
 
 
 def utc_to_localtime(utc_time):
@@ -24,21 +27,19 @@ def get_lat_lng_time(path):
     GPX stores time in UTC, assume your camera used the local
     timezone and convert accordingly.
     '''
-    points = []
     soup = BeautifulSoup(open(path))
+    points = []
+    last = None
     for item in soup.find_all('trkpt'):
-            time = convert_time(item.time.text)
-            if time:
-                points.append((utc_to_localtime(time),
-                               float(item['lat']),
-                               float(item['lon']),
-                               float(item.ele.text)))
-            else:
-                print("SOUP ERROR: %s" % item.time.text)
-
-    # sort by time just in case
+        t = utc_to_localtime(convert_time(item.time.text))
+        t = time.mktime(t.timetuple())
+        if last:
+            # Ignore bad GPX data
+            time_offset = abs(last - t)
+            if time_offset < 15:
+                points.append([t, float(item['lat']), float(item['lon']), float(item.ele.text)])
+        last = t
     points.sort()
-
     return points
 
 
@@ -57,6 +58,7 @@ def convert_time(t):
                               int(minute),
                               int(round(float(second), 0)))
         return t
+
 
 def get_datetime_tag(tags):
     for tag in [
@@ -108,10 +110,12 @@ def interpolate_lat_lng(points, timestamp):
 
     Points is a list of tuples (time, lat, lng, elevation).
     '''
-    t = timestamp
+
+    t = time.mktime(timestamp.timetuple())
 
     # find the enclosing points in sorted list
     if (t < points[0][0]) or (t >= points[-1][0]):
+        return None, None, None, None
         raise ValueError("Time t not in scope of gpx file.")
 
     for i, point in enumerate(points):
@@ -124,8 +128,8 @@ def interpolate_lat_lng(points, timestamp):
             break
 
     # time diff
-    dt_before = (t - before[0]).total_seconds()
-    dt_after = (after[0] - t).total_seconds()
+    dt_before = t - before[0]
+    dt_after = after[0] - t
 
     # simple linear interpolation
     lat = (before[1] * dt_after + after[1]*dt_before) / (dt_before + dt_after)
@@ -148,7 +152,10 @@ def add_exif_using_timestamp(filename, points, offset_bearing=0, offset_time=0):
     '''
     # Read EXIF tags from file
     with open(filename, 'rb') as f:
-        tags = exifread.process_file(f)
+        try:
+            tags = exifread.process_file(f)
+        except:
+            print filename
 
     # Get timestamp and offset time with seconds
     timestamp = get_datetime_tag(tags) \
@@ -177,6 +184,28 @@ def add_exif_using_timestamp(filename, points, offset_bearing=0, offset_time=0):
         print('ERROR: %s' % filename)
 
 
+def save_geojson_gpx(path_gpx):
+    # Parse all GPX points
+    gpx = get_lat_lng_time(path_gpx)
+
+    # Save as GeoJSON
+    geom_line = []
+    geom_point = []
+
+    for item in gpx:
+        geom_line.append((item[2], item[1]))
+        properties = {'timestamp': item[0], 'lat': item[1], 'lng': item[2]}
+        geom_point.append(Feature(geometry=Point((item[2], item[1])), properties=properties))
+
+    # LineString
+    with open("/home/denis/GIS/Mapillary/GPX_Line.geojson", 'w') as f:
+        fc = Feature(geometry=LineString(geom_line))
+        f.write(json.dumps(fc, indent=2))
+
+    with open("/home/denis/GIS/Mapillary/GPX_Point.geojson", 'w') as f:
+        fc = FeatureCollection(geom_point)
+        f.write(json.dumps(fc, indent=2))
+
 class Geotag(object):
     def __init__(self, path, path_gpx, **kwargs):
         # Optional Parameters
@@ -194,5 +223,6 @@ class Geotag(object):
 if __name__ == '__main__':
     path = '/home/denis/GIS/Mapillary/Orleans_2/'
     path_gpx = '/home/denis/GIS/Mapillary/Orleans_2.gpx'
+    #save_geojson_gpx(path_gpx)
     gpx = get_lat_lng_time(path_gpx)
     Geotag(path, path_gpx)
